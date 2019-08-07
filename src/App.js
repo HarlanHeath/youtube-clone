@@ -10,38 +10,47 @@ import { Grid } from '@material-ui/core';
 
 
 
-const handleSubmit = async (searchTerm) => {
-  const response = await youtube.get('search', {
-    params: {
-      part: 'snippet',
-      maxResults: 5,
-      key: " "/* past my api key here */,
-      q: searchTerm
-    }
-  })
-}
 
 
-function App() {
+class App extends React.Component {
+  state = {
+    video: [],
+    selectedVideo: null
+  }
 
+  handleSubmit = async (searchTerm) => {
+    const response = await youtube.get('search', {
+      params: {
+        part: 'snippet',
+        maxResults: 5,
+        key: " "/* past my api key here */,
+        q: searchTerm
+      }
+    })
+    this.setState({ videos: response.data.items, selectedVideo: response.data.items[0] })
+  }
 
-  return (
-    <Grid justify="center" container spacing={10}>
-      <Grid item xs={12}>
-        <Grid container spacing={10}>
-          <Grid item xs={12}>
-            <SearchBar onFormSubmit={handleSubmit} />
-          </Grid>
-          <Grid item xs={8}>
-            <VideoDetail />
-          </Grid>
-          <Grid item xs={4}>
-            {/* VIDEO LIST */}
+  render() {
+    const { selectedVideo } = this.state
+    return (
+      <Grid justify="center" container spacing={10} >
+        <Grid item xs={12}>
+          <Grid container spacing={10}>
+            <Grid item xs={12}>
+              <SearchBar onFormSubmit={this.handleSubmit} />
+            </Grid>
+            <Grid item xs={8}>
+              <VideoDetail vdeo={selectedVideo} />
+            </Grid>
+            <Grid item xs={4}>
+              {/* VIDEO LIST */}
+            </Grid>
           </Grid>
         </Grid>
       </Grid>
-    </Grid>
-  );
+    );
+  }
 }
+
 
 export default App;
